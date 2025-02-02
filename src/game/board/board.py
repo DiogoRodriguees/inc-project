@@ -4,18 +4,7 @@ from ..exceptions.exceptions import (
     InvalidHouseError,
 )
 
-
-class House:
-    def __init__(self, pos, color, piece=None):
-        self.color = color
-        self.pos = pos
-        self.piece = piece
-
-    def __str__(self):
-        if self.piece:
-            return self.piece
-        return self.color  # Representação visual da casa branca
-        # return "white"  # Representação visual da casa branca
+from .house import House
 
 
 class Board:
@@ -106,16 +95,14 @@ class Board:
         ]
 
     def print(self):
-        print("  a b c d e f g h")  # Cabeçalho com letras das colunas
-        for i, row in enumerate(
-            reversed(self.board), start=1
-        ):  # Inverte a ordem das linhas
-            print(f"{9 - i} ", end="")  # Ajusta a numeração correta
+        print("  a b c d e f g h")
+        for i, row in enumerate(reversed(self.board), start=1):
+            print(f"{9 - i} ", end="")
             for house in row:
                 print(str(house), end=" ")
-            print(f" {9 - i}")  # Número da linha no final
+            print(f" {9 - i}")
 
-        print("  a b c d e f g h")  # Rodapé com letras das colunas
+        print("  a b c d e f g h")
 
     def convert_position(self, position: str):
         letter, number = position[0], position[1]  # Separa os caracteres
