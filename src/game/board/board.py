@@ -8,101 +8,44 @@ from .house import House
 
 
 class Board:
+    white_house = "⬜"
+    black_house = "🟫"
+
+    white_piece = "🔴"
+    black_piece = "⚫"
 
     def __init__(self):
-        print("Starting board")
-        self.board = [
-            [
-                House("a1", "⬛", "⚫"),
-                House("a2", "⬜"),
-                House("a3", "⬛", "⚫"),
-                House("a4", "⬜"),
-                House("a5", "⬛", "⚫"),
-                House("a6", "⬜"),
-                House("a7", "⬛", "⚫"),
-                House("a8", "⬜"),
-            ],
-            [
-                House("b1", "⬜"),
-                House("b2", "⬛", "⚫"),
-                House("b3", "⬜"),
-                House("b4", "⬛", "⚫"),
-                House("b5", "⬜"),
-                House("b6", "⬛", "⚫"),
-                House("b7", "⬜"),
-                House("b8", "⬛", "⚫"),
-            ],
-            [
-                House("c1", "⬛", "⚫"),
-                House("c2", "⬜"),
-                House("c3", "⬛", "⚫"),
-                House("c4", "⬜"),
-                House("c5", "⬛", "⚫"),
-                House("c6", "⬜"),
-                House("c7", "⬛", "⚫"),
-                House("c8", "⬜"),
-            ],
-            [
-                House("d1", "⬜"),
-                House("d2", "⬛"),
-                House("d3", "⬜"),
-                House("d4", "⬛"),
-                House("d5", "⬜"),
-                House("d6", "⬛"),
-                House("d7", "⬜"),
-                House("d8", "⬛"),
-            ],
-            [
-                House("e1", "⬛"),
-                House("e2", "⬜"),
-                House("e3", "⬛"),
-                House("e4", "⬜"),
-                House("e5", "⬛"),
-                House("e6", "⬜"),
-                House("e7", "⬛"),
-                House("e8", "⬜"),
-            ],
-            [
-                House("f1", "⬜"),
-                House("f2", "⬛", "⚪"),
-                House("f3", "⬜"),
-                House("f4", "⬛", "⚪"),
-                House("f5", "⬜"),
-                House("f6", "⬛", "⚪"),
-                House("f7", "⬜"),
-                House("f8", "⬛", "⚪"),
-            ],
-            [
-                House("g1", "⬛", "⚪"),
-                House("g2", "⬜"),
-                House("g3", "⬛", "⚪"),
-                House("g4", "⬜"),
-                House("g5", "⬛", "⚪"),
-                House("g6", "⬜"),
-                House("g7", "⬛", "⚪"),
-                House("g8", "⬜"),
-            ],
-            [
-                House("h1", "⬜"),
-                House("h2", "⬛", "⚪"),
-                House("h3", "⬜"),
-                House("h4", "⬛", "⚪"),
-                House("h5", "⬜"),
-                House("h6", "⬛", "⚪"),
-                House("h7", "⬜"),
-                House("h8", "⬛", "⚪"),
-            ],
-        ]
+        self.board = self.generate_board()
+
+    def generate_board(self):
+        board = list()
+        for row in range(8):
+            board_row = list()
+            for col in range(8):
+                position = f"{chr(ord('a') + col)}{row + 1}"
+                color = self.black_house if (row + col) % 2 == 0 else self.white_house
+                piece = None
+
+                # Posicionamento inicial das peças
+                if row < 3 and color == self.black_house:
+                    piece = self.white_piece  # Peças brancas nas 3 primeiras linhas
+                elif row > 4 and color == self.black_house:
+                    piece = self.black_piece  # Peças pretas nas 3 últimas linhas
+
+                board_row.append(House(position, color, piece))
+            board.append(board_row)
+
+        return board
 
     def print(self):
-        print("  a b c d e f g h")
+        print("  a  b  c  d  e  f  g  h")
         for i, row in enumerate(reversed(self.board), start=1):
             print(f"{9 - i} ", end="")
             for house in row:
                 print(str(house), end=" ")
             print(f" {9 - i}")
 
-        print("  a b c d e f g h")
+        print("  a  b  c  d  e  f  g  h")
 
     def convert_position(self, position: str):
         letter, number = position[0], position[1]  # Separa os caracteres
@@ -120,7 +63,7 @@ class Board:
         if self.board[pos_dest_line][pos_dest_col].piece is not None:
             raise OccupiedHouseError(pos_dest)
 
-        if self.board[pos_dest_line][pos_dest_col].color != "⬛":
+        if self.board[pos_dest_line][pos_dest_col].color != self.black_house:
             raise InvalidHouseError(pos_dest)
 
         # Move a peça

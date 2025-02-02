@@ -1,5 +1,5 @@
 default:
-	python ./src/main.py
+	@python ./src/main.py
 # @echo "no command default"
 
 run:

@@ -1,7 +1,8 @@
 class Player:
-    def __init__(self, name, board):
+    def __init__(self, name, board, piece):
         self.name = name
         self.board = board
+        self.piece_color = piece
 
     def move(self, pos, pos_dest):
         print(f"moving {pos} to {pos_dest}")

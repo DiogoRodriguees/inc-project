@@ -1,14 +1,34 @@
+import os
 from game.game import Game
+
+import tkinter as tk
+from tkinter import messagebox
+
+
+def clear_screen():
+    os.system("cls" if os.name == "nt" else "clear")  # Limpa o terminal
 
 
 try:
     game = Game("Diogo", "Guest")
-    game.board.print()
 
-    game.player1.move("a3", "b4")
-    game.player1.move("b4", "a5")
-    game.board.print()
-    game.player1.print_board()
-    game.player2.print_board()
+    while True:
+        game.board.print()
+
+        pos = (
+            input("Digite a posição da peça que deseja mover (ou 'q' para sair): ")
+            .strip()
+            .lower()
+        )
+        pos_origin_dest = pos.split(" ")
+        pos = pos_origin_dest[0]
+        pos_dest = pos_origin_dest[1]
+        clear_screen()
+
+        try:
+            game.move(pos, pos_dest)
+        except Exception as e:
+            print(e)
+
 except Exception as e:
-    print(e)
+    print(f"Erro fatal: {e}")
