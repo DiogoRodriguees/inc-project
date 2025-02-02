@@ -1,10 +1,10 @@
-from ..exceptions.exceptions import (
+from .board_exceptions import (
     EmptyHouseError,
     OccupiedHouseError,
     InvalidHouseError,
 )
 
-from .house import House
+from .board_house import House
 
 
 class Board:

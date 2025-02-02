@@ -18,6 +18,13 @@ class OccupiedHouseError(InvalidMoveError):
         super().__init__(f"A casa {position} já possui uma peça.")
 
 
+class AwaitYourTime(InvalidMoveError):
+    """Exceção para quando não for a vez do jogador."""
+
+    def __init__(self, position):
+        super().__init__(f"É a vez do outro jogador")
+
+
 class InvalidHouseError(InvalidMoveError):
     """Exceção para quando a casa de destino não for preta."""
 
