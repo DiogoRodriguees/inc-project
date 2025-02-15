@@ -4,3 +4,6 @@ default:
 
 run:
 	python main.py
+
+install-dependencies:
+	pip install -r requirements.txt

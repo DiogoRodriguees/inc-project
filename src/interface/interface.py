@@ -1,12 +1,11 @@
 import cv2
 import mediapipe as mp
-
+import os
 
 
 class HandTracker:
     def __init__(self, game):
         self.game = game
-        # Inicializar MediaPipe Hand Detection
         self.mp_hands = mp.solutions.hands
         self.hands = self.mp_hands.Hands(
             min_detection_confidence=0.2, min_tracking_confidence=0.5
@@ -44,11 +43,11 @@ class HandTracker:
                 # Detectar se a mão está fechada
                 if self.is_hand_closed(landmarks):
                     if not self.hand_closed:
-                        self.mao_fechou(palm_position)
+                        self.mao_fechou(palm_position, frame)
                         self.hand_closed = True
                 else:
                     if self.hand_closed:
-                        self.mao_abriu(palm_position)
+                        self.mao_abriu(palm_position, frame)
                         self.hand_closed = False
 
                 return palm_position
@@ -70,11 +69,11 @@ class HandTracker:
         closed_threshold = 0.1
 
         return (
-            abs(thumb_tip.y - palm_base.y) < closed_threshold and
-            abs(index_tip.y - palm_base.y) < closed_threshold and
-            abs(middle_tip.y - palm_base.y) < closed_threshold and
-            abs(ring_tip.y - palm_base.y) < closed_threshold and
-            abs(pinky_tip.y - palm_base.y) < closed_threshold
+            abs(thumb_tip.y - palm_base.y) < closed_threshold
+            and abs(index_tip.y - palm_base.y) < closed_threshold
+            and abs(middle_tip.y - palm_base.y) < closed_threshold
+            and abs(ring_tip.y - palm_base.y) < closed_threshold
+            and abs(pinky_tip.y - palm_base.y) < closed_threshold
         )
 
     def calculate_grid_position(self, palm_position):
@@ -87,11 +86,12 @@ class HandTracker:
         x_pixel = int(x * self.screen_width)
         y_pixel = int(y * self.screen_height)
 
+        # print(f"x:{x_pixel}, y:{y_pixel}")
         # Calcular a linha e a coluna na grid 8x8
         row = int(y_pixel / (self.screen_height / self.grid_size))
         col = int(x_pixel / (self.screen_width / self.grid_size))
-
-        return row, col
+        row = row
+        return 8 - row, col + 1
 
     def draw_grid(self, frame):
         """
@@ -116,13 +116,13 @@ class HandTracker:
                 2,
             )
 
-    def mao_fechou(self, palm_position):
+    def mao_fechou(self, palm_position, frame):
         row, col = self.calculate_grid_position(palm_position)
         with open("log.txt", "a") as f:
             f.write(f"Mão fechou em: {row}, {col}\n")
         self.game.hand_closed(row, col)
 
-    def mao_abriu(self, palm_position):
+    def mao_abriu(self, palm_position, frame):
         row, col = self.calculate_grid_position(palm_position)
         with open("log.txt", "a") as f:
             f.write(f"Mão abriu em: {row}, {col}\n")
@@ -133,6 +133,8 @@ class HandTracker:
         cap = cv2.VideoCapture(0)  # 0 para webcam padrão
 
         while True:
+            # os.system("clear")
+            # self.game.board.print()
             ret, frame = cap.read()
             if not ret:
                 break
@@ -154,7 +156,7 @@ class HandTracker:
                 # Exibir a posição da mão na tela
                 cv2.putText(
                     frame,
-                    f"Posição: {row}, {col}",
+                    f"Posi: x:{col}, y:{row}",
                     (10, 30),
                     cv2.FONT_HERSHEY_SIMPLEX,
                     1,

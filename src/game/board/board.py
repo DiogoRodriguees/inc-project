@@ -47,27 +47,19 @@ class Board:
 
         print("  a  b  c  d  e  f  g  h")
 
-    def convert_position(self, position: str):
-        letter, number = position[0], position[1]  # Separa os caracteres
-        row = ord(letter) - ord("a") + 1  # Converte 'a' -> 1, 'b' -> 2, etc.
-        col = int(number)  # Converte '1' -> 1, '2' -> 2, etc.
-        return col - 1, row - 1
-
     def move(self, pos, pos_dest):
-        pos_line, pos_col = self.convert_position(pos)
-        pos_dest_line, pos_dest_col = self.convert_position(pos_dest)
+        (pos_x, pos_y) = pos
+        (pos_dest_x, pos_dest_y) = pos_dest
 
-        if self.board[pos_line][pos_col].piece is None:
+        if self.board[pos_y][pos_x].piece is None:
             raise EmptyHouseError(pos)
 
-        if self.board[pos_dest_line][pos_dest_col].piece is not None:
+        if self.board[pos_dest_y][pos_dest_x].piece is not None:
             raise OccupiedHouseError(pos_dest)
 
-        if self.board[pos_dest_line][pos_dest_col].color != self.black_house:
+        if self.board[pos_dest_y][pos_dest_x].color != self.black_house:
             raise InvalidHouseError(pos_dest)
 
         # Move a peça
-        self.board[pos_dest_line][pos_dest_col].piece = self.board[pos_line][
-            pos_col
-        ].piece
-        self.board[pos_line][pos_col].piece = None
+        self.board[pos_dest_y][pos_dest_x].piece = self.board[pos_y][pos_x].piece
+        self.board[pos_y][pos_x].piece = None
