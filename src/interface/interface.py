@@ -10,6 +10,7 @@ class HandTracker:
         self.hands = self.mp_hands.Hands(
             min_detection_confidence=0.2, min_tracking_confidence=0.5
         )
+        self.mp_draw = mp.solutions.drawing_utils
         self.mp_drawing = mp.solutions.drawing_utils
 
         # Definir o tamanho da grid 8x8
@@ -136,38 +137,80 @@ class HandTracker:
             # os.system("clear")
             # self.game.board.print()
             ret, frame = cap.read()
+            imgRGB = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            results = self.hands.process(imgRGB)
+
+            # Conseguiu mapear a mao
+            if results.multi_hand_landmarks:
+                # Para cada ponto da mao
+                for hand_landmarks in results.multi_hand_landmarks:
+                    self.mp_draw.draw_landmarks(
+                        frame, hand_landmarks, self.mp_hands.HAND_CONNECTIONS
+                    )
+                    for id, lm in enumerate(hand_landmarks.landmark):
+                        h, w, c = frame.shape
+                        cx, cy = int(lm.x * w), int(lm.y * h)
+
+                        if id == 9:  # MIDDLE_FINGGER_MCP
+                            pos_X = (cx // 75) + 1
+                            pos_Y = 8 - (cy // 75)
+                            mcp_y = cy
+                            cv2.circle(frame, (cx, cy), 10, (255, 0, 255), cv2.FILLED)
+                            # self.game.hand_closed(pos_Y, pos_X)
+
+                            cv2.putText(
+                                frame,
+                                f"Posi: x:{pos_X}, y:{pos_Y}",
+                                (10, 30),
+                                cv2.FONT_HERSHEY_SIMPLEX,
+                                1,
+                                (0, 255, 0),
+                                2,
+                            )
+                        if id == 12:  # MIDDLE_FINGGER_TIP
+                            pos_X = (cx // 75) + 1
+                            pos_Y = 8 - (cy // 75)
+                            tip_y = cy
+                            cv2.circle(frame, (cx, cy), 10, (255, 0, 0), cv2.FILLED)
+
+                            if tip_y > mcp_y and not self.hand_closed:
+                                self.game.hand_closed(pos_Y, pos_X)
+                                self.hand_closed = True
+                            elif tip_y < mcp_y and self.hand_closed:
+                                self.game.hand_opened(pos_Y, pos_X)
+                                self.hand_closed = False
             if not ret:
                 break
 
-            # Redimensionar para manter a proporção quadrada
+            # # Redimensionar para manter a proporção quadrada
             frame = cv2.resize(frame, (self.screen_width, self.screen_height))
 
-            # Trackear as mãos e capturar a posição da palma
-            palm_position = self.track_hands(frame)
+            # # Trackear as mãos e capturar a posição da palma
+            # palm_position = self.track_hands(frame)
 
-            # Desenhar a grid 8x8
+            # # Desenhar a grid 8x8
             self.draw_grid(frame)
 
-            # Se a palma da mão foi detectada
-            if palm_position:
-                # Calcular a posição na grid
-                row, col = self.calculate_grid_position(palm_position)
+            # # Se a palma da mão foi detectada
+            # if palm_position:
+            #     # Calcular a posição na grid
+            #     row, col = self.calculate_grid_position(palm_position)
 
-                # Exibir a posição da mão na tela
-                cv2.putText(
-                    frame,
-                    f"Posi: x:{col}, y:{row}",
-                    (10, 30),
-                    cv2.FONT_HERSHEY_SIMPLEX,
-                    1,
-                    (0, 255, 0),
-                    2,
-                )
+            #     # Exibir a posição da mão na tela
+            #     cv2.putText(
+            #         frame,
+            #         f"Posi: x:{col}, y:{row}",
+            #         (10, 30),
+            #         cv2.FONT_HERSHEY_SIMPLEX,
+            #         1,
+            #         (0, 255, 0),
+            #         2,
+            #     )
 
-            # Exibir a imagem com a grid e a posição
+            # # Exibir a imagem com a grid e a posição
             cv2.imshow("Hand Tracking with Grid", frame)
 
-            # Se a tecla 'q' for pressionada, sair do loop
+            # # Se a tecla 'q' for pressionada, sair do loop
             if cv2.waitKey(1) & 0xFF == ord("q"):
                 break
 

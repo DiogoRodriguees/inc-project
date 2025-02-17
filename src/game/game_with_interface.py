@@ -74,7 +74,7 @@ def get_board_pos(pos):
 
 
 # Loop principal
-def main():
+def init_game():
     running = True
     selected_piece = None
     while running:
