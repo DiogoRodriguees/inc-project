@@ -49,17 +49,17 @@ class Board:
 
     def move(self, pos, pos_dest):
         (pos_x, pos_y) = pos
-        (pos_dest_x, pos_dest_y) = pos_dest
+        (dest_x, dest_y) = pos_dest
 
-        if self.board[pos_y][pos_x].piece is None:
+        if self.board[pos_x][pos_y].piece == None:
             raise EmptyHouseError(pos)
 
-        if self.board[pos_dest_y][pos_dest_x].piece is not None:
-            raise OccupiedHouseError(pos_dest)
+        # if self.board[dest_x][dest_y].piece is not None:
+        #     raise OccupiedHouseError(pos_dest)
 
-        if self.board[pos_dest_y][pos_dest_x].color != self.black_house:
+        if self.board[dest_x][dest_y].color != self.black_house:
             raise InvalidHouseError(pos_dest)
 
         # Move a peça
-        self.board[pos_dest_y][pos_dest_x].piece = self.board[pos_y][pos_x].piece
-        self.board[pos_y][pos_x].piece = None
+        self.board[dest_x][dest_y].piece = self.board[pos_x][pos_y].piece
+        self.board[pos_x][pos_y].piece = None
