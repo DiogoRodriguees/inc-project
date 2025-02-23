@@ -16,8 +16,8 @@ class HandTracker:
 
         # Definir o tamanho da grid 8x8
         self.grid_size = 8
-        self.screen_width = 800  # Largura da tela quadrada
-        self.screen_height = 800  # Altura da tela quadrada
+        self.screen_width = 900  # Largura da tela quadrada
+        self.screen_height = 900  # Altura da tela quadrada
         self.hand_closed = False
 
     def draw_grid(self, frame):

@@ -34,7 +34,7 @@ class Board:
 
                 board_row.append(House(position, color, piece))
             board.append(board_row)
-
+        # print(board[0][0].piece)
         return board
 
     def print(self):
@@ -50,7 +50,11 @@ class Board:
     def move(self, pos, pos_dest):
         (pos_x, pos_y) = pos
         (dest_x, dest_y) = pos_dest
-
+        pos_x = pos_x - 1
+        dest_x = dest_x - 1
+        pos_y = pos_y - 1
+        dest_y = dest_y - 1
+        # print(f"Moving {pos_x, pos_y} to {pos_y,dest_y}")
         if self.board[pos_x][pos_y].piece == None:
             raise EmptyHouseError(pos)
 
@@ -61,5 +65,5 @@ class Board:
             raise InvalidHouseError(pos_dest)
 
         # Move a peça
-        self.board[dest_x][dest_y].piece = self.board[pos_x][pos_y].piece
-        self.board[pos_x][pos_y].piece = None
+        self.board[dest_y][dest_x].piece = self.board[pos_y][pos_x].piece
+        self.board[pos_y][pos_x].piece = None
